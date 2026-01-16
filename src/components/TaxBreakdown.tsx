@@ -1,5 +1,6 @@
 import { memo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Button } from './ui/button'
 import { AssumptionsModal } from './AssumptionsModal'
 import type { CalculationResult } from '@/types'
 
@@ -58,12 +59,53 @@ export const TaxBreakdown = memo(function TaxBreakdown({ result }: TaxBreakdownP
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">в год</p>
                   </div>
-                  <button
+                  <Button
+                    variant="outline"
                     onClick={() => toggleCard(item.category)}
-                    className="text-sm text-muted-foreground hover:text-foreground self-start sm:self-center whitespace-nowrap"
+                    className="self-start sm:self-center whitespace-nowrap text-xs sm:text-sm"
+                    aria-expanded={isExpanded}
+                    aria-label={isExpanded ? 'Свернуть детали' : 'Показать детали расчета'}
                   >
-                    {isExpanded ? '▼ Свернуть' : 'Как считали'}
-                  </button>
+                    <span className="flex items-center gap-1.5">
+                      {isExpanded ? (
+                        <>
+                          <svg
+                            className="w-4 h-4 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 15l7-7 7 7"
+                            />
+                          </svg>
+                          <span>Свернуть</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            className="w-4 h-4 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                          <span>Подробнее</span>
+                        </>
+                      )}
+                    </span>
+                  </Button>
                 </div>
               </CardHeader>
             {isExpanded && (
