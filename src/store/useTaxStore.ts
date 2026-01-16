@@ -15,6 +15,7 @@ interface TaxStore {
   
   // Actions
   updateProfile: (updates: Partial<UserProfile>) => void
+  updateRules: (updates: Partial<TaxRules>) => void
   resetProfile: () => void
   recalculate: () => void
 }
@@ -30,6 +31,10 @@ function syncWithUrl(profile: UserProfile) {
   params.set('salaryType', profile.salaryType)
   params.set('otherIncome', profile.otherIncome.toString())
   params.set('spending', profile.monthlySpending.toString())
+  
+  if (profile.calculationMode) {
+    params.set('mode', profile.calculationMode)
+  }
   
   if (profile.optionalExpenses?.fuel) {
     params.set('fuel', profile.optionalExpenses.fuel.toString())
@@ -70,6 +75,11 @@ function loadFromUrl(): Partial<UserProfile> | null {
   const salaryType = params.get('salaryType')
   if (salaryType === 'gross' || salaryType === 'net') {
     profile.salaryType = salaryType
+  }
+
+  const mode = params.get('mode')
+  if (mode === 'personal' || mode === 'withEmployer') {
+    profile.calculationMode = mode
   }
 
   const otherIncome = params.get('otherIncome')
@@ -120,6 +130,19 @@ export const useTaxStore = create<TaxStore>()(
             return { profile: newProfile }
           })
           // Debounced пересчёт для оптимизации производительности
+          if (recalculateTimeout) {
+            clearTimeout(recalculateTimeout)
+          }
+          recalculateTimeout = setTimeout(() => {
+            get().recalculate()
+          }, DEBOUNCE_MS)
+        },
+
+        updateRules: (updates) => {
+          set((state) => ({
+            rules: { ...state.rules, ...updates },
+          }))
+          // Пересчитываем после изменения правил
           if (recalculateTimeout) {
             clearTimeout(recalculateTimeout)
           }

@@ -3,22 +3,25 @@ import { calcNdflProgressive } from './ndfl'
 import { calcEmployerContrib } from './employerContrib'
 import { calcPropertyTaxes } from './property'
 import { calcVatEstimate, calcExciseTaxes } from './indirect'
+import { calcGrossFromNet } from './grossFromNet'
+import { calcSelfEmploymentTax } from './selfEmployment'
 
 /**
  * Агрегатор всех расчётов
  * Возвращает полную детализацию и итоги
  */
 export function calcTotals(profile: UserProfile, rules: TaxRules): CalculationResult {
-  // Определяем годовой доход
+  // Определяем годовой доход (для НДФЛ)
   let annualIncome: number
+  let grossSalary: number
+  
   if (profile.salaryType === 'gross') {
     // Если зарплата gross, то это доход до вычета НДФЛ
+    grossSalary = profile.salary
     annualIncome = profile.salary * 12 + profile.otherIncome
   } else {
-    // Если зарплата net, нужно восстановить gross
-    // net = gross * (1 - 0.13) для базовой ставки
-    // Упрощённо: gross = net / 0.87
-    const grossSalary = profile.salary / 0.87
+    // Если зарплата net, нужно восстановить gross с учетом прогрессивной шкалы
+    grossSalary = calcGrossFromNet(profile.salary, profile.otherIncome, rules.ndfl.brackets)
     annualIncome = grossSalary * 12 + profile.otherIncome
   }
 
@@ -26,13 +29,9 @@ export function calcTotals(profile: UserProfile, rules: TaxRules): CalculationRe
   const ndflResult = calcNdflProgressive(annualIncome, rules.ndfl.brackets)
   const ndfl = ndflResult.total
 
-  // Определяем gross зарплату для расчёта взносов
-  const grossSalary = profile.salaryType === 'gross' 
-    ? profile.salary 
-    : profile.salary / 0.87
-
-  // Расчёт взносов работодателя
-  const employerContrib = calcEmployerContrib(grossSalary, rules.employerContrib)
+  // Расчёт взносов работодателя (используем уже вычисленный grossSalary)
+  const employerContribResult = calcEmployerContrib(grossSalary, rules.employerContrib)
+  const employerContrib = employerContribResult.total
 
   // Расчёт имущественных налогов
   const propertyTaxes = calcPropertyTaxes(profile)
@@ -43,14 +42,26 @@ export function calcTotals(profile: UserProfile, rules: TaxRules): CalculationRe
   // Расчёт акцизов
   const excise = calcExciseTaxes(profile, rules.indirect)
 
-  // Итого налогов
-  const totalTaxes = ndfl + employerContrib + propertyTaxes + vat + excise
+  // Расчёт НПД (самозанятость)
+  const selfEmploymentTax = calcSelfEmploymentTax(profile.selfEmployment)
+
+  // Определяем режим подсчета (по умолчанию 'withEmployer')
+  const mode = profile.calculationMode || 'withEmployer'
+
+  // Итого налогов (в зависимости от режима)
+  const totalTaxes = mode === 'withEmployer'
+    ? ndfl + employerContrib + propertyTaxes + vat + excise + selfEmploymentTax
+    : ndfl + propertyTaxes + vat + excise + selfEmploymentTax
 
   // На руки (доход минус НДФЛ)
   const netIncome = annualIncome - ndfl
 
   // Эффективная нагрузка (%)
-  const effectiveRate = annualIncome > 0 ? (totalTaxes / annualIncome) * 100 : 0
+  // В знаменателе: стоимость работы (net + налоги и взносы)
+  const workCost = mode === 'withEmployer' 
+    ? netIncome + ndfl + employerContrib // на руки + НДФЛ + взносы работодателя
+    : netIncome + ndfl // на руки + НДФЛ
+  const effectiveRate = workCost > 0 ? (totalTaxes / workCost) * 100 : 0
 
   // Детализация
   const breakdown: TaxBreakdownItem[] = [
@@ -60,11 +71,17 @@ export function calcTotals(profile: UserProfile, rules: TaxRules): CalculationRe
       description: 'Налог на доходы физических лиц',
       details: ndflResult.breakdown,
     },
-    {
+    ...(mode === 'withEmployer' ? [{
       category: 'Взносы работодателя',
       amount: Math.round(employerContrib),
-      description: 'Страховые взносы (30% до предельной базы, 15.1% сверх)',
-    },
+      description: 'Страховые взносы: пенсионные (22% до базы, 10% сверх), медицинское (5.1%), социальное (2.9%), травматизм (0.2%)',
+      employerContribDetails: employerContribResult.breakdown,
+    }] : []),
+    ...(selfEmploymentTax > 0 ? [{
+      category: 'НПД (самозанятость)',
+      amount: Math.round(selfEmploymentTax),
+      description: 'Налог на профессиональный доход (4% от физ лиц, 6% от юр лиц)',
+    }] : []),
     {
       category: 'Имущественные налоги',
       amount: Math.round(propertyTaxes),

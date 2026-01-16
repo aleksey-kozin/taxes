@@ -84,8 +84,10 @@ describe('calcTotals', () => {
 
     const result = calcTotals(profile, rules2025)
 
-    const annualIncome = profile.salary * 12
-    const expectedRate = (result.totalTaxes / annualIncome) * 100
+    // Эффективная нагрузка рассчитывается как totalTaxes / workCost * 100
+    // где workCost = netIncome + ndfl + employerContrib (в режиме withEmployer)
+    const workCost = result.netIncome + result.ndfl + result.employerContrib
+    const expectedRate = workCost > 0 ? (result.totalTaxes / workCost) * 100 : 0
 
     expect(Math.abs(result.effectiveRate - expectedRate)).toBeLessThan(0.1)
   })
