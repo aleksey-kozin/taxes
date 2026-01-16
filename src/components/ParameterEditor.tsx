@@ -331,198 +331,177 @@ export function ParameterEditor() {
         <div className="space-y-4">
           <h3 className="text-sm font-semibold">Имущественные налоги</h3>
           
-          {/* Проверяем, используется ли блок "напрямую" */}
-          {(() => {
-            const hasDirectValues = 
-              (profile.propertyTaxes?.property || 0) > 0 ||
-              (profile.propertyTaxes?.transport || 0) > 0 ||
-              (profile.propertyTaxes?.land || 0) > 0
-            const hasDetailedValues = 
-              profile.propertyTaxes?.hasApartment || 
-              profile.propertyTaxes?.hasLand
+          {/* Квартира */}
+          <div className="space-y-2 border rounded-md p-3">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="hasApartment"
+                checked={profile.propertyTaxes?.hasApartment || false}
+                onChange={(e) => {
+                  handleChange('propertyTaxes.hasApartment', e.target.checked)
+                }}
+                className="h-4 w-4"
+              />
+              <Label htmlFor="hasApartment" className="cursor-pointer">
+                Есть квартира
+              </Label>
+            </div>
+            {profile.propertyTaxes?.hasApartment && (
+              <div className="pl-6 space-y-2">
+                <div>
+                  <Label htmlFor="apartmentArea" className="text-xs">
+                    Площадь (м²)
+                  </Label>
+                  <Input
+                    id="apartmentArea"
+                    type="number"
+                    value={profile.propertyTaxes?.apartmentArea || 0}
+                    onChange={(e) =>
+                      handleChange('propertyTaxes.apartmentArea', parseFloat(e.target.value) || 0)
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="apartmentCadastralValue" className="text-xs">
+                    Кадастровая стоимость (₽)
+                  </Label>
+                  <Input
+                    id="apartmentCadastralValue"
+                    type="number"
+                    value={profile.propertyTaxes?.apartmentCadastralValue || 0}
+                    onChange={(e) =>
+                      handleChange('propertyTaxes.apartmentCadastralValue', parseFloat(e.target.value) || 0)
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="apartmentRate" className="text-xs">
+                    Ставка налога (%)
+                  </Label>
+                  <Input
+                    id="apartmentRate"
+                    type="number"
+                    step="0.1"
+                    value={profile.propertyTaxes?.apartmentRate || 0}
+                    onChange={(e) =>
+                      handleChange('propertyTaxes.apartmentRate', parseFloat(e.target.value) || 0)
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </div>
 
-            return (
-              <>
-                {/* Квартира */}
-                {!hasDirectValues && (
-                  <div className="space-y-2 border rounded-md p-3">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="hasApartment"
-                        checked={profile.propertyTaxes?.hasApartment || false}
-                        onChange={(e) => {
-                          handleChange('propertyTaxes.hasApartment', e.target.checked)
-                        }}
-                        className="h-4 w-4"
-                      />
-                      <Label htmlFor="hasApartment" className="cursor-pointer">
-                        Есть квартира
-                      </Label>
-                    </div>
-                    {profile.propertyTaxes?.hasApartment && (
-                      <div className="pl-6 space-y-2">
-                        <div>
-                          <Label htmlFor="apartmentArea" className="text-xs">
-                            Площадь (м²)
-                          </Label>
-                          <Input
-                            id="apartmentArea"
-                            type="number"
-                            value={profile.propertyTaxes?.apartmentArea || 0}
-                            onChange={(e) =>
-                              handleChange('propertyTaxes.apartmentArea', parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="apartmentCadastralValue" className="text-xs">
-                            Кадастровая стоимость (₽)
-                          </Label>
-                          <Input
-                            id="apartmentCadastralValue"
-                            type="number"
-                            value={profile.propertyTaxes?.apartmentCadastralValue || 0}
-                            onChange={(e) =>
-                              handleChange('propertyTaxes.apartmentCadastralValue', parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="apartmentRate" className="text-xs">
-                            Ставка налога (%)
-                          </Label>
-                          <Input
-                            id="apartmentRate"
-                            type="number"
-                            step="0.1"
-                            value={profile.propertyTaxes?.apartmentRate || 0}
-                            onChange={(e) =>
-                              handleChange('propertyTaxes.apartmentRate', parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+          {/* Земельный участок */}
+          <div className="space-y-2 border rounded-md p-3">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="hasLand"
+                checked={profile.propertyTaxes?.hasLand || false}
+                onChange={(e) => {
+                  handleChange('propertyTaxes.hasLand', e.target.checked)
+                }}
+                className="h-4 w-4"
+              />
+              <Label htmlFor="hasLand" className="cursor-pointer">
+                Есть земельный участок
+              </Label>
+            </div>
+            {profile.propertyTaxes?.hasLand && (
+              <div className="pl-6 space-y-2">
+                <div>
+                  <Label htmlFor="landArea" className="text-xs">
+                    Площадь (м²)
+                  </Label>
+                  <Input
+                    id="landArea"
+                    type="number"
+                    value={profile.propertyTaxes?.landArea || 0}
+                    onChange={(e) =>
+                      handleChange('propertyTaxes.landArea', parseFloat(e.target.value) || 0)
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="landCadastralValue" className="text-xs">
+                    Кадастровая стоимость (₽)
+                  </Label>
+                  <Input
+                    id="landCadastralValue"
+                    type="number"
+                    value={profile.propertyTaxes?.landCadastralValue || 0}
+                    onChange={(e) =>
+                      handleChange('propertyTaxes.landCadastralValue', parseFloat(e.target.value) || 0)
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="landRate" className="text-xs">
+                    Ставка налога (%)
+                  </Label>
+                  <Input
+                    id="landRate"
+                    type="number"
+                    step="0.1"
+                    value={profile.propertyTaxes?.landRate || 0}
+                    onChange={(e) =>
+                      handleChange('propertyTaxes.landRate', parseFloat(e.target.value) || 0)
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </div>
 
-                {/* Земельный участок */}
-                {!hasDirectValues && (
-                  <div className="space-y-2 border rounded-md p-3">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="hasLand"
-                        checked={profile.propertyTaxes?.hasLand || false}
-                        onChange={(e) => {
-                          handleChange('propertyTaxes.hasLand', e.target.checked)
-                        }}
-                        className="h-4 w-4"
-                      />
-                      <Label htmlFor="hasLand" className="cursor-pointer">
-                        Есть земельный участок
-                      </Label>
-                    </div>
-                    {profile.propertyTaxes?.hasLand && (
-                      <div className="pl-6 space-y-2">
-                        <div>
-                          <Label htmlFor="landArea" className="text-xs">
-                            Площадь (м²)
-                          </Label>
-                          <Input
-                            id="landArea"
-                            type="number"
-                            value={profile.propertyTaxes?.landArea || 0}
-                            onChange={(e) =>
-                              handleChange('propertyTaxes.landArea', parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="landCadastralValue" className="text-xs">
-                            Кадастровая стоимость (₽)
-                          </Label>
-                          <Input
-                            id="landCadastralValue"
-                            type="number"
-                            value={profile.propertyTaxes?.landCadastralValue || 0}
-                            onChange={(e) =>
-                              handleChange('propertyTaxes.landCadastralValue', parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="landRate" className="text-xs">
-                            Ставка налога (%)
-                          </Label>
-                          <Input
-                            id="landRate"
-                            type="number"
-                            step="0.1"
-                            value={profile.propertyTaxes?.landRate || 0}
-                            onChange={(e) =>
-                              handleChange('propertyTaxes.landRate', parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Устаревшие поля для обратной совместимости */}
-                {!hasDetailedValues && (
-                  <div className="space-y-2 border rounded-md p-3 bg-muted/30">
-                    <Label className="text-xs text-muted-foreground">
-                      Или укажите суммы напрямую (из уведомлений ФНС)
-                    </Label>
-                    <div className="space-y-2">
-                      <div>
-                        <Label htmlFor="property" className="text-xs">
-                          Налог на имущество в год (₽)
-                        </Label>
-                        <Input
-                          id="property"
-                          type="number"
-                          value={profile.propertyTaxes?.property || 0}
-                          onChange={(e) =>
-                            handleChange('propertyTaxes.property', parseFloat(e.target.value) || 0)
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="transport" className="text-xs">
-                          Транспортный налог в год (₽)
-                        </Label>
-                        <Input
-                          id="transport"
-                          type="number"
-                          value={profile.propertyTaxes?.transport || 0}
-                          onChange={(e) =>
-                            handleChange('propertyTaxes.transport', parseFloat(e.target.value) || 0)
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="land" className="text-xs">
-                          Земельный налог в год (₽)
-                        </Label>
-                        <Input
-                          id="land"
-                          type="number"
-                          value={profile.propertyTaxes?.land || 0}
-                          onChange={(e) =>
-                            handleChange('propertyTaxes.land', parseFloat(e.target.value) || 0)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            )
-          })()}
+          {/* Устаревшие поля для обратной совместимости */}
+          <div className="space-y-2 border rounded-md p-3 bg-muted/30">
+            <Label className="text-xs text-muted-foreground">
+              Или укажите суммы напрямую (из уведомлений ФНС)
+            </Label>
+            <div className="space-y-2">
+              <div>
+                <Label htmlFor="property" className="text-xs">
+                  Налог на имущество в год (₽)
+                </Label>
+                <Input
+                  id="property"
+                  type="number"
+                  value={profile.propertyTaxes?.property || 0}
+                  onChange={(e) =>
+                    handleChange('propertyTaxes.property', parseFloat(e.target.value) || 0)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="transport" className="text-xs">
+                  Транспортный налог в год (₽)
+                </Label>
+                <Input
+                  id="transport"
+                  type="number"
+                  value={profile.propertyTaxes?.transport || 0}
+                  onChange={(e) =>
+                    handleChange('propertyTaxes.transport', parseFloat(e.target.value) || 0)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="land" className="text-xs">
+                  Земельный налог в год (₽)
+                </Label>
+                <Input
+                  id="land"
+                  type="number"
+                  value={profile.propertyTaxes?.land || 0}
+                  onChange={(e) =>
+                    handleChange('propertyTaxes.land', parseFloat(e.target.value) || 0)
+                  }
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Профили пользователей */}
