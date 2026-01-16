@@ -25,63 +25,73 @@ export function ChartsSection({ result }: ChartsSectionProps) {
   const [activeTab, setActiveTab] = useState('overview')
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto">
-        <TabsTrigger value="overview" className="text-xs sm:text-sm">
-          Обзор
-        </TabsTrigger>
-        <TabsTrigger value="comparison" className="text-xs sm:text-sm">
-          Сравнение
-        </TabsTrigger>
-        <TabsTrigger value="employer" className="text-xs sm:text-sm">
-          Взносы
-        </TabsTrigger>
-        <TabsTrigger value="ndfl" className="text-xs sm:text-sm">
-          НДФЛ
-        </TabsTrigger>
-        <TabsTrigger value="distribution" className="text-xs sm:text-sm">
-          Доход
-        </TabsTrigger>
-        <TabsTrigger value="dynamics" className="text-xs sm:text-sm">
-          Динамика
-        </TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="overview" className="space-y-4 mt-4">
+    <div className="w-full">
+      {/* Mobile: Show only distribution chart */}
+      <div className="md:hidden">
         <Suspense fallback={<ChartLoader />}>
           <Visualization result={result} />
         </Suspense>
-      </TabsContent>
+      </div>
 
-      <TabsContent value="comparison" className="mt-4">
-        <Suspense fallback={<ChartLoader />}>
-          <TaxComparisonChart result={result} />
-        </Suspense>
-      </TabsContent>
+      {/* Desktop: Show tabs with all charts */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full hidden md:block">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">
+            Обзор
+          </TabsTrigger>
+          <TabsTrigger value="comparison" className="text-xs sm:text-sm">
+            Сравнение
+          </TabsTrigger>
+          <TabsTrigger value="employer" className="text-xs sm:text-sm">
+            Взносы
+          </TabsTrigger>
+          <TabsTrigger value="ndfl" className="text-xs sm:text-sm">
+            НДФЛ
+          </TabsTrigger>
+          <TabsTrigger value="distribution" className="text-xs sm:text-sm">
+            Доход
+          </TabsTrigger>
+          <TabsTrigger value="dynamics" className="text-xs sm:text-sm">
+            Динамика
+          </TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="employer" className="mt-4">
-        <Suspense fallback={<ChartLoader />}>
-          <EmployerContribChart result={result} />
-        </Suspense>
-      </TabsContent>
+        <TabsContent value="overview" className="space-y-4 mt-4">
+          <Suspense fallback={<ChartLoader />}>
+            <Visualization result={result} />
+          </Suspense>
+        </TabsContent>
 
-      <TabsContent value="ndfl" className="mt-4">
-        <Suspense fallback={<ChartLoader />}>
-          <NdflProgressiveChart result={result} />
-        </Suspense>
-      </TabsContent>
+        <TabsContent value="comparison" className="mt-4">
+          <Suspense fallback={<ChartLoader />}>
+            <TaxComparisonChart result={result} />
+          </Suspense>
+        </TabsContent>
 
-      <TabsContent value="distribution" className="mt-4">
-        <Suspense fallback={<ChartLoader />}>
-          <IncomeDistributionChart result={result} />
-        </Suspense>
-      </TabsContent>
+        <TabsContent value="employer" className="mt-4">
+          <Suspense fallback={<ChartLoader />}>
+            <EmployerContribChart result={result} />
+          </Suspense>
+        </TabsContent>
 
-      <TabsContent value="dynamics" className="mt-4">
-        <Suspense fallback={<ChartLoader />}>
-          <TaxDynamicsChart result={result} />
-        </Suspense>
-      </TabsContent>
-    </Tabs>
+        <TabsContent value="ndfl" className="mt-4">
+          <Suspense fallback={<ChartLoader />}>
+            <NdflProgressiveChart result={result} />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="distribution" className="mt-4">
+          <Suspense fallback={<ChartLoader />}>
+            <IncomeDistributionChart result={result} />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="dynamics" className="mt-4">
+          <Suspense fallback={<ChartLoader />}>
+            <TaxDynamicsChart result={result} />
+          </Suspense>
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }
