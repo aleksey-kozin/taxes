@@ -507,7 +507,7 @@ export function ParameterEditor() {
         {/* Профили пользователей */}
         <div className="space-y-2">
           <Label>Готовые профили</Label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <Button
               variant="outline"
               onClick={() => updateProfile(profiles.poor)}

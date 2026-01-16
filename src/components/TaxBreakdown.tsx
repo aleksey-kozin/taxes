@@ -39,7 +39,7 @@ export const TaxBreakdown = memo(function TaxBreakdown({ result }: TaxBreakdownP
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Разбор налогов</h2>
+      <h2 className="text-xl sm:text-2xl font-bold">Разбор налогов</h2>
       {result.breakdown
         .filter((item) => item.amount > 0)
         .map((item) => {
@@ -50,17 +50,17 @@ export const TaxBreakdown = memo(function TaxBreakdown({ result }: TaxBreakdownP
           return (
             <Card key={item.category}>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{item.category}</CardTitle>
-                    <p className="text-2xl font-bold text-destructive mt-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex-1">
+                    <CardTitle className="text-base sm:text-lg">{item.category}</CardTitle>
+                    <p className="text-xl sm:text-2xl font-bold text-destructive mt-2 break-words">
                       {item.amount.toLocaleString('ru-RU')} ₽
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">в год</p>
                   </div>
                   <button
                     onClick={() => toggleCard(item.category)}
-                    className="text-sm text-muted-foreground hover:text-foreground"
+                    className="text-sm text-muted-foreground hover:text-foreground self-start sm:self-center whitespace-nowrap"
                   >
                     {isExpanded ? '▼ Свернуть' : 'Как считали'}
                   </button>

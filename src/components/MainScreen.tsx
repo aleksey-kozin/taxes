@@ -24,25 +24,25 @@ export function MainScreen() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Налоги гражданина РФ</h1>
+    <div className="container mx-auto px-3 sm:px-4 py-4 space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold">Налоги гражданина РФ</h1>
         
         {/* Переключатель режимов */}
-        <div className="flex gap-2 items-center">
-          <span className="text-sm text-muted-foreground">Режим подсчета:</span>
-          <div className="flex border rounded-md">
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+          <span className="text-sm text-muted-foreground whitespace-nowrap">Режим подсчета:</span>
+          <div className="flex border rounded-md w-full sm:w-auto">
             <Button
               variant={mode === 'personal' ? 'default' : 'ghost'}
               onClick={() => handleModeChange('personal')}
-              className="rounded-r-none rounded-l-md"
+              className="rounded-r-none rounded-l-md flex-1 sm:flex-initial text-xs sm:text-sm px-2 sm:px-4"
             >
               Только из дохода
             </Button>
             <Button
               variant={mode === 'withEmployer' ? 'default' : 'ghost'}
               onClick={() => handleModeChange('withEmployer')}
-              className="rounded-l-none rounded-r-md"
+              className="rounded-l-none rounded-r-md flex-1 sm:flex-initial text-xs sm:text-sm px-2 sm:px-4"
             >
               Включая работодателя
             </Button>
@@ -53,7 +53,7 @@ export function MainScreen() {
       {/* Пояснение режима */}
       {mode === 'withEmployer' && (
         <Card className="bg-muted/50">
-          <CardContent className="pt-6">
+          <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
             <p className="text-sm text-muted-foreground">
               Взносы работодателя платит работодатель, но они являются частью стоимости вашей работы. 
               Государство получает эти деньги благодаря вам: нет сотрудника — не будет и взносов.
@@ -64,10 +64,10 @@ export function MainScreen() {
 
       {/* Большой виджет с итогами */}
       <Card className="bg-primary/5 border-2 border-primary/20">
-        <CardContent className="pt-6">
+        <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">Государство получило</p>
-            <p className="text-5xl font-bold text-destructive">
+            <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-destructive break-words px-2">
               {result.totalTaxes.toLocaleString('ru-RU')} ₽
             </p>
             <p className="text-sm text-muted-foreground mt-1">в год</p>
@@ -76,17 +76,17 @@ export function MainScreen() {
       </Card>
 
       {/* Блок "Итого" */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">
+            <CardTitle className="text-base sm:text-lg">
               <Tooltip content="Доход после вычета НДФЛ">
                 На руки
               </Tooltip>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">
+            <div className="text-2xl sm:text-3xl font-bold break-words">
               {result.netIncome.toLocaleString('ru-RU')} ₽
             </div>
             <p className="text-sm text-muted-foreground">в год</p>
@@ -95,14 +95,14 @@ export function MainScreen() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">
+            <CardTitle className="text-base sm:text-lg">
               <Tooltip content="Сумма всех налогов и взносов: НДФЛ, взносы работодателя, имущественные, НДС, акцизы">
                 Налоги/взносы
               </Tooltip>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-destructive">
+            <div className="text-2xl sm:text-3xl font-bold text-destructive break-words">
               {result.totalTaxes.toLocaleString('ru-RU')} ₽
             </div>
             <p className="text-sm text-muted-foreground">в год</p>
@@ -111,14 +111,14 @@ export function MainScreen() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">
+            <CardTitle className="text-base sm:text-lg">
               <Tooltip content="Процент налогов от общего дохода (налоги / доход × 100%)">
                 Эффективная нагрузка
               </Tooltip>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">
+            <div className="text-2xl sm:text-3xl font-bold">
               {result.effectiveRate.toFixed(1)}%
             </div>
             <p className="text-sm text-muted-foreground">от дохода</p>

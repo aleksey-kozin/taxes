@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useState, useEffect } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import type { CalculationResult } from '@/types'
@@ -10,6 +10,17 @@ interface VisualizationProps {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
 export const Visualization = memo(function Visualization({ result }: VisualizationProps) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const data = result.breakdown
     .filter((item) => item.amount > 0)
     .map((item, index) => ({
@@ -45,7 +56,7 @@ export const Visualization = memo(function Visualization({ result }: Visualizati
               cy="50%"
               labelLine={false}
               label={({ name, percent }) => `${name}: ${((percent || 0) * 100).toFixed(1)}%`}
-              outerRadius={80}
+              outerRadius={isMobile ? 60 : 80}
               fill="#8884d8"
               dataKey="value"
             >
