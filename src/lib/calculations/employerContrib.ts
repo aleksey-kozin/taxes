@@ -29,5 +29,5 @@ export function calcEmployerContrib(
     totalContribKopecks = basePartKopecks + excessPartKopecks
   }
 
-  return Math.round(totalContribKopecks) / 100 // округляем и конвертируем в рубли
+  return Math.round(totalContribKopecks / 100) // округляем и конвертируем в рубли
 }

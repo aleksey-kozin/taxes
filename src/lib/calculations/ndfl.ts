@@ -53,7 +53,7 @@ export function calcNdflProgressive(
   }
 
   return {
-    total: Math.round(totalTaxKopecks) / 100, // округляем и конвертируем в рубли
+    total: Math.round(totalTaxKopecks / 100), // округляем и конвертируем в рубли
     breakdown,
   }
 }
