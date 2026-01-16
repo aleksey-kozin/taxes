@@ -65,10 +65,10 @@ export const Visualization = memo(function Visualization({ result }: Visualizati
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number | undefined) => [
-                value ? `${value.toLocaleString('ru-RU')} ₽` : '0 ₽',
-                'Сумма',
-              ]}
+              formatter={(value: unknown) => {
+                const numValue = typeof value === 'number' ? value : 0
+                return [`${numValue.toLocaleString('ru-RU')} ₽`, 'Сумма']
+              }}
             />
             <Legend />
           </PieChart>

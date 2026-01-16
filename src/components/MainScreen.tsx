@@ -1,11 +1,21 @@
+import { lazy, Suspense } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Tooltip } from './ui/tooltip'
 import { Button } from './ui/button'
-import { Visualization } from './Visualization'
-import { TaxBreakdown } from './TaxBreakdown'
-import { Storytelling } from './Storytelling'
 import { useTaxStore } from '@/store/useTaxStore'
 import type { CalculationMode } from '@/types'
+
+// Lazy load heavy components for code splitting
+const TaxBreakdown = lazy(() => import('./TaxBreakdown').then(m => ({ default: m.TaxBreakdown })))
+const Storytelling = lazy(() => import('./Storytelling').then(m => ({ default: m.Storytelling })))
+const ChartsSection = lazy(() => import('./charts/ChartsSection').then(m => ({ default: m.ChartsSection })))
+
+// Loading fallback component
+const ComponentLoader = () => (
+  <div className="flex items-center justify-center h-32">
+    <div className="text-muted-foreground">Загрузка...</div>
+  </div>
+)
 
 export function MainScreen() {
   const { result, profile, updateProfile } = useTaxStore()
@@ -127,13 +137,19 @@ export function MainScreen() {
       </div>
 
       {/* Сторителлинг */}
-      <Storytelling result={result} />
+      <Suspense fallback={<ComponentLoader />}>
+        <Storytelling result={result} />
+      </Suspense>
 
-      {/* Визуализация */}
-      <Visualization result={result} />
+      {/* Графики с вкладками */}
+      <Suspense fallback={<ComponentLoader />}>
+        <ChartsSection result={result} />
+      </Suspense>
 
       {/* Расшифровка */}
-      <TaxBreakdown result={result} />
+      <Suspense fallback={<ComponentLoader />}>
+        <TaxBreakdown result={result} />
+      </Suspense>
     </div>
   )
 }
